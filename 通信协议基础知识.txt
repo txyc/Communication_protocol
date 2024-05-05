@@ -3,7 +3,7 @@
 # 姓名：田鑫
 # 邮箱：965622832@qq.com
 # #############################################
-一、RIP协议概览
+一、RIP协议概览：https://support.huawei.com/enterprise/zh/doc/EDOC1100262534/6828d440
 1、RIP协议的简要说明
 RIP——Routing Information Protocol，属于IGP(Interio Gateway Protocol)的一种
 RIP使用跳数(Hop Count)来衡量大道目的地址的举例，称之为度量值。度量值范围为0-15，超过则表示目的网络或主机不可达。
@@ -36,7 +36,7 @@ RIP-2使用组播地址224.0.0.9作为协议报文的目的IP地址，仅RIP-2�
 # 姓名：田鑫
 # 邮箱：965622832@qq.com
 # #############################################
-二、OSPF协议说明
+二、OSPF协议说明：https://info.support.huawei.com/info-finder/encyclopedia/zh/OSPF.html#content3
 1、OSPF协议概览
 OSPF-Open Shortest Path First，IETF组织开发的基于链路状态的内部网关协议(Interior Gateway Protocol)
 IPv4协议使用OSPFv2，IPv6协议使用OSPFv3
@@ -44,9 +44,48 @@ OSPF基于最短路径SPF(Shortest Path First)的Dijkstra算法，通过链路�
 OSPF报文自带掩码信息，支持VLSM(Variable Length Subnet Mask)可变长子网掩码，且算法保证了不会成环。
 OSPF支持到同一目的地址的多条等价路由
 OSPF的路由分为：域内路由、域间路由、第一类外部路由、第二类外部路由
+OSPF的运行必须要存在RouterID，32bits的无符号数，表示一台路由器在自治系统中的唯一标识
+
+OSPF协议下的路由器类型分为：
+区域内路由器(Internal Router)——该设备的所有接口都属于同一个OSPF区域
+区域边界路由器ABR(Area Border Router)——该设备可以同时属于两个以上的区域，但其中一个必须时骨干区域，即ABR用于连接骨干区域和非骨干区域
+骨干路由器(Backbone Router)——该设备至少有一个借口属于骨干区域，所有的ABR和位于Area0的内部设备都是骨干路由器
+自制系统边界路由器ASBR(AS Boundary)——与其他AS交换路由信息的设备成为ASBR。ASBR并不一定位于AS边界，他可能是区域内设备，也可能时ABR。只要有一台OSPF设备引入了外部路由的信息，他就成为ASBR。
+
+区域类型：
+普通区域——普通区域包括标准区域和骨干区域
+STUB区域——不允许发布自制系统外部路由，只允许发布区域内路由和区域间路由
+Totally STUB区域——不允许发布自制系统外部路由，只允许发布区域内路由
+NSSA区域——允许引入自治系统外部路由，该区域的ABR发布Type7缺省路由传播到区域内，所有域间路由都必须通过ABR才能发布
+Totally NSSA区域——允许引入自治系统外部路由，该区域的ABR发布Type3和Typ7缺省路由传播到区域内，所有域间路由都必须通过ABR才能发布
+
+OSPF支持的网络类型：
+广播类型(Broadcast)——
+NBMA类型——
+P2MP类型——
+P2P类型——
+
+
 
 2、OSPF的报文说明
-
+OSPF采用组播形式收发报文
+OSPF支持无类型域间选路（CIDR）
+OSPF支持对等价路由进行负载分担
+OSPF支持报文加密
+OSPF主要支持以下5种报文：
+	Hello报文——周期性发送，用来发现和维持OSPF邻居关系
+	DD(Database Description packet)报文——描述本地LSDB的摘要信息，用于两台设备进行数据库同步
+	LSR(Link State Request packet)报文——用于向对方请求所需的LSA。设备只有在OSPF邻居双方成功交换DD报文后才会向对方发送LSR报文
+	LSU(Link State Update packet)报文——用于向对方发送其所需要的LSA
+	LSAck(Link State Acknowledgment packet)报文——用来对接收到的LSA进行确认
+OSPF中的LSA类型：
+	Router-LSA(Type1)——每个设备都会产生，描述设备的链路状态和开销，在所属的区域内传播
+	Network-LSA(Type2)——用DR产生，描述本网段的链路状态，在所属的区域内传播
+	Network-summary-LSA(Type3)——用ABR产生，描述区域内某个网段的路由，并通告给发布或接收此LSA的非Totally STUB或NSSA区域。
+	ASBR-summary-LSA(Type4)——有ABR产生，描述到ASBR的路由，通告给除ASBR所在区域的其他相关区域
+	AS-external-LSA(Type5)——有ASBR产生，描述到AS外部的路由，通告到所有区域（除STUB区域和NSSA区域）
+	NSSA LSA(Type7)——有ASBR产生，描述道AS外部的路由，仅在NSSA区域内传播
+	Opaque LSA(Type9/Type10/Type11)——提供用于OSPF的扩展通用机制
 
 
 
